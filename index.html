@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>k4niissg – Game Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --panel: #111111;
+      --border: #222;
+      --accent: #e8ff00;
+      --accent2: #ff3c00;
+      --text: #f0f0f0;
+      --muted: #888;
+      --card-bg: #141414;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── SCANLINE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,.18) 3px,
+        rgba(0,0,0,.18) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      text-align: center;
+      padding: 3rem 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 20px var(--accent);
+    }
+    .site-title {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(2rem, 6vw, 4rem);
+      letter-spacing: .15em;
+      color: var(--accent);
+      text-shadow: 0 0 30px rgba(232,255,0,.5), 0 0 60px rgba(232,255,0,.2);
+      animation: flicker 4s infinite;
+    }
+    @keyframes flicker {
+      0%,95%,100% { opacity:1 }
+      96% { opacity:.7 }
+      97% { opacity:1 }
+      98% { opacity:.5 }
+    }
+    .site-subtitle {
+      font-family: 'Rajdhani', sans-serif;
+      color: var(--muted);
+      font-size: .9rem;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      margin-top: .4rem;
+    }
+
+    /* ─── CONSOLE TABS ─── */
+    .tabs-wrapper {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      padding: 2rem 1rem 0;
+      flex-wrap: wrap;
+    }
+    .tab-btn {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      letter-spacing: .1em;
+      padding: .6rem 1.8rem;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+      clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+      transition: all .25s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,255,0,.07);
+      box-shadow: 0 0 16px rgba(232,255,0,.25);
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    /* ─── MAIN LAYOUT ─── */
+    .main-area {
+      display: grid;
+      grid-template-columns: 260px 1fr 220px;
+      gap: 1.2rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    @media(max-width:900px) {
+      .main-area { grid-template-columns: 1fr; }
+    }
+
+    /* ─── SIDE PANEL (comments) ─── */
+    .side-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent2);
+      padding: 1rem;
+      border-radius: 2px;
+    }
+    .panel-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--accent2);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      padding-bottom: .5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Request box */
+    .request-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid #ff3c00;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 2px;
+    }
+    .request-box p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: .8rem;
+    }
+    .request-box input[type="text"] {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .5rem .7rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: .82rem;
+      margin-bottom: .5rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .request-box input:focus { border-color: var(--accent); }
+    .request-box button {
+      width: 100%;
+      padding: .5rem;
+      background: var(--accent2);
+      color: #fff;
+      border: none;
+      font-family: 'Orbitron', monospace;
+      font-size: .7rem;
+      letter-spacing: .1em;
+      cursor: pointer;
+      clip-path: polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+      transition: opacity .2s;
+    }
+    .request-box button:hover { opacity: .85; }
+
+    /* Comments list */
+    .comments-list { display: flex; flex-direction: column; gap: .7rem; max-height: 420px; overflow-y: auto; }
+    .comments-list::-webkit-scrollbar { width: 4px; }
+    .comments-list::-webkit-scrollbar-track { background: #0d0d0d; }
+    .comments-list::-webkit-scrollbar-thumb { background: var(--border); }
+    .comment-item {
+      background: #0d0d0d;
+      border-left: 2px solid var(--accent);
+      padding: .6rem .8rem;
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .comment-item span { color: var(--accent); font-weight: 700; display: block; margin-bottom: .2rem; font-size: .72rem; }
+    .comments-input-area { margin-top: .8rem; }
+    .comments-input-area textarea {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .5rem .7rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: .8rem;
+      resize: none;
+      height: 65px;
+      outline: none;
+    }
+    .comments-input-area textarea:focus { border-color: var(--accent); }
+    .comments-input-area input[type="text"] {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .45rem .7rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: .8rem;
+      outline: none;
+      margin-bottom: .4rem;
+    }
+    .comments-input-area input:focus { border-color: var(--accent); }
+    .comments-input-area button {
+      width: 100%;
+      padding: .45rem;
+      background: #1a1a1a;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      cursor: pointer;
+      margin-top: .4rem;
+      transition: background .2s;
+    }
+    .comments-input-area button:hover { background: rgba(232,255,0,.1); }
+
+    /* ─── GAME VIEWER ─── */
+    .game-viewer {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      flex-direction: column;
+    }
+    .viewer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: #0f0f0f;
+    }
+    .viewer-console-badge {
+      font-family: 'Orbitron', monospace;
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .2rem .7rem;
+      clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+    }
+    .viewer-game-name {
+      font-family: 'Cairo', sans-serif;
+      font-size: .85rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .game-image-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      position: relative;
+      min-height: 320px;
+    }
+    .game-image-area img {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(0,0,0,.8);
+      transition: opacity .4s;
+    }
+    .no-game {
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 2;
+    }
+    .no-game .icon {
+      font-size: 3rem;
+      margin-bottom: .5rem;
+      display: block;
+      opacity: .3;
+    }
+
+    /* NAV ARROWS */
+    .nav-arrows {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .8rem 1rem;
+      border-top: 1px solid var(--border);
+      background: #0f0f0f;
+    }
+    .arrow-btn {
+      font-family: 'Orbitron', monospace;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      padding: .5rem 1.2rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .arrow-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,255,0,.07);
+    }
+    .game-counter {
+      font-family: 'Orbitron', monospace;
+      font-size: .75rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+    }
+    .game-counter span { color: var(--accent); }
+
+    /* ─── RIGHT PANEL ─── */
+    .right-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .stats-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      padding: 1rem;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: .78rem;
+      padding: .35rem 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row .val { color: var(--accent); font-family: 'Orbitron', monospace; font-size: .7rem; }
+
+    .contact-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent2);
+      padding: 1rem;
+    }
+    .contact-box .panel-title { color: var(--accent2); }
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: .5rem;
+    }
+    .contact-row .icon { font-size: 1rem; }
+    .contact-row a {
+      color: var(--accent);
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: .85rem;
+      letter-spacing: .05em;
+    }
+    .contact-row a:hover { text-decoration: underline; }
+
+    /* ─── GAMES GRID ─── */
+    .games-grid-section {
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+      padding: 0 1rem;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .section-header h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: .85rem;
+      letter-spacing: .2em;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+    .game-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .game-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 0 1px rgba(232,255,0,.15);
+    }
+    .game-card img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      display: block;
+      filter: brightness(.85);
+      transition: filter .25s;
+    }
+    .game-card:hover img { filter: brightness(1); }
+    .game-card-name {
+      padding: .5rem .6rem;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+      border-top: 1px solid var(--border);
+      background: #0f0f0f;
+    }
+    .game-card-console {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      letter-spacing: .1em;
+      color: var(--accent);
+      display: block;
+      margin-top: .2rem;
+    }
+    /* active card glow */
+    .game-card.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(232,255,0,.3);
+    }
+    .game-card.selected::before {
+      content: '▶';
+      position: absolute;
+      top: 6px; right: 6px;
+      font-size: .6rem;
+      color: var(--accent);
+      background: rgba(0,0,0,.8);
+      padding: 2px 5px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: .75rem;
+      letter-spacing: .1em;
+      font-family: 'Rajdhani', sans-serif;
+    }
+    footer span { color: var(--accent); }
+
+    /* ─── NOTIFICATION ─── */
+    .notif {
+      position: fixed;
+      bottom: 1.5rem; right: 1.5rem;
+      background: #111;
+      border: 1px solid var(--accent);
+      border-left: 3px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Cairo', sans-serif;
+      font-size: .8rem;
+      padding: .8rem 1.2rem;
+      z-index: 9998;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+      max-width: 260px;
+    }
+    .notif.show { opacity: 1; transform: translateY(0); }
+
+    /* Tabs animation */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s, transform .5s;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="site-title">k4niissg</div>
+  <div class="site-subtitle">PlayStation Game Store · PS2 · PS3 · PS4</div>
+</header>
+
+<!-- CONSOLE TABS -->
+<div class="tabs-wrapper">
+  <button class="tab-btn active" onclick="switchTab('ps4',this)">PlayStation 4</button>
+  <button class="tab-btn" onclick="switchTab('ps3',this)">PlayStation 3</button>
+  <button class="tab-btn" onclick="switchTab('ps2',this)">PlayStation 2</button>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main-area reveal" id="mainArea">
+
+  <!-- LEFT: Comments + Request -->
+  <aside>
+    <!-- Request a game -->
+    <div class="request-box">
+      <p class="panel-title" style="color:var(--accent2);font-family:'Orbitron',monospace;font-size:.68rem;letter-spacing:.15em;margin-bottom:.6rem;">◈ طلب لعبة</p>
+      <p>هل تبحث عن لعبة غير متوفرة عندنا؟ اطلبها وسنحاول توفيرها لك!</p>
+      <input type="text" id="requestGameInput" placeholder="اسم اللعبة..." />
+      <button onclick="submitRequest()">إرسال الطلب</button>
+    </div>
+
+    <!-- Comments -->
+    <div class="side-panel">
+      <div class="panel-title">◈ تعليقات اللاعبين</div>
+      <div class="comments-list" id="commentsList">
+      </div>
+      <div class="comments-input-area">
+        <input type="text" id="commentUser" placeholder="اسمك..." />
+        <textarea id="commentText" placeholder="اكتب تعليقك هنا..."></textarea>
+        <button onclick="addComment()">نشر التعليق</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CENTER: Game Viewer -->
+  <section class="game-viewer">
+    <div class="viewer-header">
+      <div class="viewer-console-badge" id="viewerBadge">PS4</div>
+      <div class="viewer-game-name" id="viewerGameName">اختر لعبة للعرض</div>
+    </div>
+
+    <div class="game-image-area" id="gameImageArea">
+      <div class="no-game">
+        <span class="icon">🎮</span>
+        اختر لعبة من الأسفل لعرض تفاصيلها
+      </div>
+    </div>
+
+    <div class="nav-arrows">
+      <button class="arrow-btn" onclick="prevGame()">◀ السابقة</button>
+      <div class="game-counter">
+        <span id="currentIdx">–</span> / <span id="totalGames">–</span>
+      </div>
+      <button class="arrow-btn" onclick="nextGame()">التالية ▶</button>
+    </div>
+  </section>
+
+  <!-- RIGHT: Stats + Contact -->
+  <aside class="right-panel">
+    <div class="stats-box">
+      <div class="panel-title" style="font-family:'Orbitron',monospace;font-size:.68rem;letter-spacing:.15em;color:var(--accent);text-transform:uppercase;margin-bottom:.8rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);">◈ إحصائيات</div>
+      <div class="stat-row"><span>ألعاب PS4</span><span class="val" id="countPs4">–</span></div>
+      <div class="stat-row"><span>ألعاب PS3</span><span class="val" id="countPs3">–</span></div>
+      <div class="stat-row"><span>ألعاب PS2</span><span class="val" id="countPs2">–</span></div>
+      <div class="stat-row"><span>الإجمالي</span><span class="val" id="countTotal">–</span></div>
+    </div>
+
+    <div class="contact-box">
+      <div class="panel-title">◈ تواصل معنا</div>
+      <div class="contact-row">
+        <span class="icon">📞</span>
+        <span>0780257213</span>
+      </div>
+      <div class="contact-row">
+        <span class="icon">📸</span>
+        <a href="https://instagram.com/k4niissg" target="_blank">@k4niissg</a>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<!-- GAMES GRID -->
+<div class="games-grid-section reveal" id="gamesGridSection">
+  <div class="section-header">
+    <h2 id="gridTitle">ألعاب PlayStation 4</h2>
+  </div>
+  <div class="games-grid" id="gamesGrid">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>k4niissg · <span>PlayStation Game Store</span></div>
+  <div style="margin-top:.4rem;font-size:.65rem;opacity:.5;">design gaming but simple</div>
+</footer>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+/* ═══════════════════════════════════
+   DATA — يجلب الصور من مجلدات ps4 / ps3 / ps2
+   ═══════════════════════════════════
+   اضف صور الألعاب داخل مجلدات:
+     ps4/  →  ps4/god-of-war.jpg  , ps4/spider-man.jpg ...
+     ps3/  →  ps3/tlou.jpg ...
+     ps2/  →  ps2/gta-sa.jpg ...
+   
+   ثم أضف بيانات كل لعبة في المصفوفة أدناه بنفس اسم الملف.
+   ═══════════════════════════════════ */
+
+const GAMES = {
+  ps4: [
+    { name: "God of War",          file: "god-of-war.jpg" },
+    { name: "Spider-Man",          file: "spider-man.jpg" },
+    { name: "The Last of Us Part II", file: "tlou2.jpg" },
+    { name: "Uncharted 4",         file: "uncharted4.jpg" },
+    { name: "Bloodborne",          file: "bloodborne.jpg" },
+    { name: "Horizon Zero Dawn",   file: "horizon.jpg" },
+    { name: "GTA V",               file: "gta5.jpg" },
+    { name: "FIFA 23",             file: "fifa23.jpg" },
+  ],
+  ps3: [
+    { name: "The Last of Us",      file: "tlou.jpg" },
+    { name: "GTA V",               file: "gta5.jpg" },
+    { name: "Red Dead Redemption", file: "rdr.jpg" },
+    { name: "Uncharted 3",         file: "uncharted3.jpg" },
+    { name: "God of War III",      file: "gow3.jpg" },
+  ],
+  ps2: [
+    { name: "GTA San Andreas",     file: "gta-sa.jpg" },
+    { name: "God of War II",       file: "gow2.jpg" },
+    { name: "Shadow of the Colossus", file: "sotc.jpg" },
+    { name: "Tekken 5",            file: "tekken5.jpg" },
+  ],
+};
+
+let currentConsole = 'ps4';
+let currentIndex   = 0;
+
+/* ─── HELPERS ─── */
+function imagePath(console, file) {
+  return `${console}/${file}`;
+}
+
+function showNotif(msg) {
+  const n = document.getElementById('notif');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 2800);
+}
+
+/* ─── STATS ─── */
+function updateStats() {
+  document.getElementById('countPs4').textContent  = GAMES.ps4.length;
+  document.getElementById('countPs3').textContent  = GAMES.ps3.length;
+  document.getElementById('countPs2').textContent  = GAMES.ps2.length;
+  document.getElementById('countTotal').textContent =
+    GAMES.ps4.length + GAMES.ps3.length + GAMES.ps2.length;
+}
+
+/* ─── RENDER GRID ─── */
+function renderGrid(console) {
+  const grid  = document.getElementById('gamesGrid');
+  const title = document.getElementById('gridTitle');
+  const labels = { ps4:'PlayStation 4', ps3:'PlayStation 3', ps2:'PlayStation 2' };
+  title.textContent = `ألعاب ${labels[console]}`;
+  grid.innerHTML = '';
+
+  const list = GAMES[console];
+  if (!list || !list.length) {
+    grid.innerHTML = '<p style="color:var(--muted);font-size:.8rem;grid-column:1/-1">لا توجد ألعاب بعد في هذا القسم.</p>';
+    return;
+  }
+
+  list.forEach((game, i) => {
+    const card = document.createElement('div');
+    card.className = 'game-card' + (i === currentIndex ? ' selected' : '');
+    card.onclick = () => selectGame(i);
+
+    const img = document.createElement('img');
+    img.src   = imagePath(console, game.file);
+    img.alt   = game.name;
+    img.onerror = () => {
+      img.style.display = 'none';
+      const placeholder = document.createElement('div');
+      placeholder.style.cssText = 'width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;background:#0d0d0d;font-size:2rem;opacity:.3;';
+      placeholder.textContent = '🎮';
+      card.insertBefore(placeholder, card.firstChild);
+    };
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'game-card-name';
+    nameDiv.innerHTML = `${game.name}<span class="game-card-console">${console.toUpperCase()}</span>`;
+
+    card.append(img, nameDiv);
+    grid.appendChild(card);
+  });
+}
+
+/* ─── SELECT GAME (VIEWER) ─── */
+function selectGame(idx) {
+  const list = GAMES[currentConsole];
+  currentIndex = idx;
+
+  // update grid selection
+  document.querySelectorAll('.game-card').forEach((c,i) => {
+    c.classList.toggle('selected', i === idx);
+  });
+
+  // update viewer
+  const game = list[idx];
+  document.getElementById('viewerBadge').textContent    = currentConsole.toUpperCase();
+  document.getElementById('viewerGameName').textContent = game.name;
+  document.getElementById('currentIdx').textContent     = idx + 1;
+  document.getElementById('totalGames').textContent     = list.length;
+
+  const area = document.getElementById('gameImageArea');
+  area.innerHTML = '';
+  const img = document.createElement('img');
+  img.src   = imagePath(currentConsole, game.file);
+  img.alt   = game.name;
+  img.style.animation = 'fadeIn .4s ease';
+  img.onerror = () => {
+    area.innerHTML = `<div class="no-game"><span class="icon">🎮</span>الصورة غير متوفرة<br><small style="font-size:.7rem">${game.file}</small></div>`;
+  };
+  area.appendChild(img);
+}
+
+/* ─── NAV ARROWS ─── */
+function nextGame() {
+  const list = GAMES[currentConsole];
+  if (!list.length) return;
+  selectGame((currentIndex + 1) % list.length);
+}
+function prevGame() {
+  const list = GAMES[currentConsole];
+  if (!list.length) return;
+  selectGame((currentIndex - 1 + list.length) % list.length);
+}
+
+/* ─── TABS ─── */
+function switchTab(console, btn) {
+  currentConsole = console;
+  currentIndex   = 0;
+
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  renderGrid(console);
+
+  // reset viewer
+  document.getElementById('viewerBadge').textContent    = console.toUpperCase();
+  document.getElementById('viewerGameName').textContent = 'اختر لعبة للعرض';
+  document.getElementById('gameImageArea').innerHTML    = '<div class="no-game"><span class="icon">🎮</span>اختر لعبة من الأسفل</div>';
+  document.getElementById('currentIdx').textContent     = '–';
+  document.getElementById('totalGames').textContent     = '–';
+}
+
+/* ─── COMMENTS ─── */
+function addComment() {
+  const user = document.getElementById('commentUser').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  if (!user || !text) { showNotif('أدخل الاسم والتعليق!'); return; }
+
+  const list = document.getElementById('commentsList');
+  const div  = document.createElement('div');
+  div.className = 'comment-item';
+  div.innerHTML = `<span>// ${user}</span>${text}`;
+  list.prepend(div);
+
+  document.getElementById('commentUser').value = '';
+  document.getElementById('commentText').value = '';
+  showNotif('تم نشر تعليقك ✓');
+}
+
+/* ─── REQUEST ─── */
+function submitRequest() {
+  const val = document.getElementById('requestGameInput').value.trim();
+  if (!val) { showNotif('اكتب اسم اللعبة أولاً!'); return; }
+  showNotif(`✓ تم إرسال طلب: "${val}"`);
+  document.getElementById('requestGameInput').value = '';
+}
+
+/* ─── SCROLL REVEAL ─── */
+function revealOnScroll() {
+  document.querySelectorAll('.reveal').forEach(el => {
+    const r = el.getBoundingClientRect();
+    if (r.top < window.innerHeight - 60) el.classList.add('visible');
+  });
+}
+window.addEventListener('scroll', revealOnScroll);
+
+/* ─── KEYBOARD NAV ─── */
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight') prevGame();
+  if (e.key === 'ArrowLeft')  nextGame();
+});
+
+/* ─── FADE IN keyframe ─── */
+const style = document.createElement('style');
+style.textContent = '@keyframes fadeIn { from{opacity:0;transform:scale(.97)} to{opacity:1;transform:scale(1)} }';
+document.head.appendChild(style);
+
+/* ─── INIT ─── */
+updateStats();
+renderGrid('ps4');
+setTimeout(revealOnScroll, 100);
+</script>
+</body>
+</html>

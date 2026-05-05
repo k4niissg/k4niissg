@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>k4niissg – لوحة الإدارة</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --panel: #111;
+      --border: #222;
+      --accent: #e8ff00;
+      --accent2: #ff3c00;
+      --text: #f0f0f0;
+      --muted: #777;
+      --card: #141414;
+    }
+    /* ── LOGIN SCREEN ── */
+    #loginScreen {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      flex-direction: column;
+    }
+    #loginScreen.hidden { display: none; }
+    .login-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .login-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.6rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-shadow: 0 0 24px rgba(232,255,0,.4);
+      margin-bottom: .3rem;
+    }
+    .login-sub {
+      font-size: .7rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+    }
+    .login-label {
+      font-size: .72rem;
+      color: var(--muted);
+      text-align: right;
+      display: block;
+      margin-bottom: .4rem;
+    }
+    #loginInput {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .75rem 1rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      letter-spacing: .15em;
+      text-align: center;
+      transition: border-color .2s;
+      margin-bottom: 1rem;
+    }
+    #loginInput:focus { border-color: var(--accent); }
+    #loginInput.shake {
+      animation: shake .4s ease;
+      border-color: var(--accent2) !important;
+    }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)}
+      60%{transform:translateX(-5px)}
+      80%{transform:translateX(5px)}
+    }
+    .login-btn {
+      width: 100%;
+      padding: .75rem;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: 'Orbitron', monospace;
+      font-size: .75rem;
+      letter-spacing: .15em;
+      cursor: pointer;
+      clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+      transition: opacity .2s, box-shadow .2s;
+    }
+    .login-btn:hover { opacity: .85; box-shadow: 0 0 20px rgba(232,255,0,.3); }
+    #loginErr {
+      font-size: .75rem;
+      color: var(--accent2);
+      margin-top: .7rem;
+      min-height: 1.2rem;
+    }
+    #loginAttempts {
+      font-size: .65rem;
+      color: #444;
+      margin-top: .4rem;
+      font-family: 'Orbitron', monospace;
+      letter-spacing: .1em;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    /* scanline */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(to bottom, transparent 0px, transparent 3px, rgba(0,0,0,.12) 3px, rgba(0,0,0,.12) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    header::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 50%;
+      transform: translateX(-50%);
+      width: 140px; height: 2px;
+      background: var(--accent);
+      box-shadow: 0 0 16px var(--accent);
+    }
+    .logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 2rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-shadow: 0 0 30px rgba(232,255,0,.4);
+    }
+    .logo-sub {
+      font-size: .75rem;
+      letter-spacing: .25em;
+      color: var(--muted);
+      margin-top: .3rem;
+      text-transform: uppercase;
+    }
+
+    /* LAYOUT */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    @media(max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+    /* CARD */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      padding: 1.5rem;
+      border-radius: 2px;
+    }
+    .card.danger { border-top-color: var(--accent2); }
+    .card-title {
+      font-family: 'Orbitron', monospace;
+      font-size: .72rem;
+      letter-spacing: .18em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      padding-bottom: .7rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card.danger .card-title { color: var(--accent2); }
+
+    /* FORM */
+    label {
+      display: block;
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: .3rem;
+      margin-top: .9rem;
+    }
+    label:first-of-type { margin-top: 0; }
+
+    input[type="text"], select {
+      width: 100%;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .6rem .8rem;
+      font-family: 'Cairo', sans-serif;
+      font-size: .85rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus, select:focus { border-color: var(--accent); }
+    select option { background: #111; }
+
+    /* IMAGE UPLOAD */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      background: #0d0d0d;
+      text-align: center;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      margin-top: .3rem;
+    }
+    .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: rgba(232,255,0,.04); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-zone .up-icon { font-size: 2rem; opacity: .4; display: block; margin-bottom: .4rem; }
+    .upload-zone p { font-size: .78rem; color: var(--muted); }
+    .upload-zone p span { color: var(--accent); }
+
+    /* PREVIEW */
+    .preview-area {
+      margin-top: .8rem;
+      display: none;
+      align-items: flex-start;
+      gap: .8rem;
+    }
+    .preview-area.show { display: flex; }
+    .preview-area img {
+      width: 80px;
+      height: 100px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+    .preview-info { font-size: .75rem; color: var(--muted); line-height: 1.8; }
+    .preview-info strong { color: var(--accent); display: block; font-size: .8rem; margin-bottom: .2rem; }
+
+    /* BUTTONS */
+    .btn {
+      width: 100%;
+      padding: .7rem;
+      font-family: 'Orbitron', monospace;
+      font-size: .72rem;
+      letter-spacing: .12em;
+      cursor: pointer;
+      border: none;
+      margin-top: 1.2rem;
+      clip-path: polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+      transition: opacity .2s, box-shadow .2s;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { opacity: .85; box-shadow: 0 0 20px rgba(232,255,0,.3); }
+    .btn-danger { background: var(--accent2); color: #fff; }
+    .btn-danger:hover { opacity: .85; }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      clip-path: none;
+      margin-top: .5rem;
+    }
+    .btn-outline:hover { background: rgba(232,255,0,.08); }
+
+    /* GAMES LIST */
+    .games-list { display: flex; flex-direction: column; gap: .6rem; max-height: 480px; overflow-y: auto; }
+    .games-list::-webkit-scrollbar { width: 4px; }
+    .games-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .game-row {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      padding: .5rem .7rem;
+      transition: border-color .2s;
+    }
+    .game-row:hover { border-color: #333; }
+    .game-row img {
+      width: 38px; height: 50px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .game-row-info { flex: 1; }
+    .game-row-name { font-size: .82rem; font-weight: 700; }
+    .game-row-console {
+      font-family: 'Orbitron', monospace;
+      font-size: .55rem;
+      letter-spacing: .1em;
+      color: var(--accent);
+      margin-top: .1rem;
+    }
+    .game-row-file { font-size: .65rem; color: var(--muted); margin-top: .1rem; }
+    .del-btn {
+      background: none;
+      border: 1px solid #333;
+      color: var(--accent2);
+      font-size: .75rem;
+      padding: .3rem .5rem;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .del-btn:hover { background: rgba(255,60,0,.1); border-color: var(--accent2); }
+
+    /* TABS */
+    .mini-tabs { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .mini-tab {
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: .1em;
+      padding: .35rem 1rem;
+      border: 1px solid var(--border);
+      background: #0d0d0d;
+      color: var(--muted);
+      cursor: pointer;
+      clip-path: polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%);
+      transition: all .2s;
+    }
+    .mini-tab.active, .mini-tab:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232,255,0,.06);
+    }
+
+    /* EXPORT BOX */
+    .export-box {
+      background: #0d0d0d;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      font-size: .72rem;
+      color: var(--muted);
+      font-family: monospace;
+      white-space: pre-wrap;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: .8rem;
+      line-height: 1.7;
+      direction: ltr;
+      text-align: left;
+    }
+    .copy-btn {
+      width: 100%;
+      padding: .5rem;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'Orbitron', monospace;
+      font-size: .62rem;
+      letter-spacing: .1em;
+      cursor: pointer;
+      margin-top: .4rem;
+      transition: all .2s;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* EMPTY */
+    .empty-msg {
+      text-align: center;
+      color: var(--muted);
+      font-size: .78rem;
+      padding: 2rem;
+      border: 1px dashed var(--border);
+      line-height: 2;
+    }
+
+    /* NOTIF */
+    .notif {
+      position: fixed;
+      bottom: 1.5rem; left: 1.5rem;
+      background: #111;
+      border: 1px solid var(--accent);
+      border-left: 3px solid var(--accent);
+      color: var(--accent);
+      font-size: .8rem;
+      padding: .8rem 1.2rem;
+      z-index: 9998;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all .3s;
+      pointer-events: none;
+      max-width: 280px;
+    }
+    .notif.show { opacity: 1; transform: translateY(0); }
+    .notif.err { border-color: var(--accent2); color: var(--accent2); }
+
+    /* INSTRUCTIONS */
+    .instructions {
+      max-width: 1000px;
+      margin: 1.5rem auto 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-right: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 2;
+    }
+    .instructions strong { color: var(--accent); }
+    .instructions code {
+      background: #0d0d0d;
+      padding: .1rem .4rem;
+      color: var(--text);
+      font-size: .72rem;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── LOGIN SCREEN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">k4niissg</div>
+    <div class="login-sub">◈ Admin Access Only ◈</div>
+    <label class="login-label">كلمة السر</label>
+    <input type="password" id="loginInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPass()" />
+    <button class="login-btn" onclick="checkPass()">دخول ←</button>
+    <div id="loginErr"></div>
+    <div id="loginAttempts"></div>
+  </div>
+</div>
+
+<header>
+  <div class="logo">k4niissg</div>
+  <div class="logo-sub">◈ لوحة إدارة الألعاب ◈</div>
+</header>
+
+<div class="layout">
+
+  <!-- ── ADD GAME ── -->
+  <div class="card">
+    <div class="card-title">◈ إضافة لعبة جديدة</div>
+
+    <label>اسم اللعبة</label>
+    <input type="text" id="gameName" placeholder="مثال: God of War Ragnarök" />
+
+    <label>الكونسول</label>
+    <select id="gameConsole">
+      <option value="ps4">PlayStation 4</option>
+      <option value="ps3">PlayStation 3</option>
+      <option value="ps2">PlayStation 2</option>
+    </select>
+
+    <label>صورة اللعبة (اختياري)</label>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="imageInput" accept="image/*" onchange="handleImage(this)" />
+      <span class="up-icon">🖼️</span>
+      <p>اسحب الصورة هنا أو <span>اضغط للاختيار</span></p>
+      <p style="margin-top:.3rem;font-size:.65rem">JPG · PNG · WEBP</p>
+    </div>
+
+    <div class="preview-area" id="previewArea">
+      <img id="previewImg" src="" alt="preview" />
+      <div class="preview-info">
+        <strong id="previewName">–</strong>
+        <span id="previewSize">–</span><br>
+        <span style="color:#555;font-size:.65rem">سيُحفظ في مجلد الكونسول المختار</span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="addGame()">➕ إضافة اللعبة</button>
+  </div>
+
+  <!-- ── GAMES LIST ── -->
+  <div class="card">
+    <div class="card-title">◈ قائمة الألعاب</div>
+
+    <div class="mini-tabs">
+      <button class="mini-tab active" onclick="filterList('all',this)">الكل</button>
+      <button class="mini-tab" onclick="filterList('ps4',this)">PS4</button>
+      <button class="mini-tab" onclick="filterList('ps3',this)">PS3</button>
+      <button class="mini-tab" onclick="filterList('ps2',this)">PS2</button>
+    </div>
+
+    <div class="games-list" id="gamesList"></div>
+  </div>
+
+  <!-- ── EXPORT ── -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <div class="card-title">◈ تصدير الكود — انسخه وضعه في index.html</div>
+    <p style="font-size:.75rem;color:var(--muted);margin-bottom:.5rem;">
+      بعد إضافة الألعاب، انسخ هذا الكود والصقه في <code style="background:#0d0d0d;padding:.1rem .4rem;border:1px solid var(--border);color:var(--text)">index.html</code> مكان <code style="background:#0d0d0d;padding:.1rem .4rem;border:1px solid var(--border);color:var(--text)">const GAMES = { ... }</code>
+    </p>
+    <div class="export-box" id="exportBox">// أضف ألعاباً لتظهر هنا</div>
+    <button class="copy-btn" onclick="copyExport()">⧉ نسخ الكود</button>
+  </div>
+
+</div>
+
+<!-- INSTRUCTIONS -->
+<div class="instructions">
+  <strong>📁 كيفية رفع الصور على GitHub:</strong><br>
+  ١. أضف اللعبة هنا وانسخ الكود → ضعه في <code>index.html</code><br>
+  ٢. ارفع صورة اللعبة في المجلد الصحيح داخل الـ repository:<br>
+  &nbsp;&nbsp;&nbsp;• ألعاب PS4 → مجلد <code>ps4/</code> &nbsp;|&nbsp; PS3 → <code>ps3/</code> &nbsp;|&nbsp; PS2 → <code>ps2/</code><br>
+  ٣. اسم ملف الصورة يجب أن يطابق ما هو في الكود (مثلاً <code>god-of-war.jpg</code>)<br>
+  <strong>💡 نصيحة:</strong> استخدم أسماء بدون مسافات ولا رموز خاصة، استعمل <code>-</code> بدلاً من المسافة.
+</div>
+
+<div class="notif" id="notif"></div>
+
+<script>
+/* ══════════════════════════════
+   PASSWORD PROTECTION
+══════════════════════════════ */
+const PASS = 'Assg.1346';
+let attempts = 0;
+const MAX_ATTEMPTS = 5;
+
+function checkPass() {
+  const input = document.getElementById('loginInput');
+  const err   = document.getElementById('loginErr');
+  const att   = document.getElementById('loginAttempts');
+
+  if (attempts >= MAX_ATTEMPTS) {
+    err.textContent = '🔒 تم قفل الصفحة. أعد تحميل المتصفح.';
+    return;
+  }
+
+  if (input.value === PASS) {
+    sessionStorage.setItem('k4_auth', '1');
+    document.getElementById('loginScreen').classList.add('hidden');
+    err.textContent = '';
+    att.textContent = '';
+  } else {
+    attempts++;
+    input.value = '';
+    input.classList.remove('shake');
+    void input.offsetWidth; // reflow to restart animation
+    input.classList.add('shake');
+    setTimeout(() => input.classList.remove('shake'), 400);
+
+    const left = MAX_ATTEMPTS - attempts;
+    err.textContent = '❌ كلمة السر خاطئة!';
+    att.textContent = left > 0 ? `محاولات متبقية: ${left}` : '🔒 تم قفل الصفحة.';
+
+    if (attempts >= MAX_ATTEMPTS) {
+      document.getElementById('loginInput').disabled = true;
+      document.querySelector('.login-btn').disabled  = true;
+    }
+  }
+}
+
+// Check session on load
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('k4_auth') === '1') {
+    document.getElementById('loginScreen').classList.add('hidden');
+  } else {
+    setTimeout(() => document.getElementById('loginInput').focus(), 100);
+  }
+});
+
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+let games = JSON.parse(localStorage.getItem('k4_games') || '[]');
+let currentFilter = 'all';
+let imageDataUrl = '';
+let imageFileName = '';
+
+/* ══════════════════════════════
+   HELPERS
+══════════════════════════════ */
+function save() {
+  localStorage.setItem('k4_games', JSON.stringify(games));
+}
+
+function slugify(str) {
+  return str.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9\-أ-ي]/g, '')
+    .replace(/-+/g, '-');
+}
+
+function showNotif(msg, err = false) {
+  const n = document.getElementById('notif');
+  n.className = 'notif' + (err ? ' err' : '');
+  n.textContent = msg;
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════
+   IMAGE HANDLING
+══════════════════════════════ */
+function handleImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  imageFileName = slugify(file.name.replace(/\.[^.]+$/, '')) + '.' + file.name.split('.').pop().toLowerCase();
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    imageDataUrl = e.target.result;
+    document.getElementById('previewImg').src = imageDataUrl;
+    document.getElementById('previewName').textContent = imageFileName;
+    document.getElementById('previewSize').textContent =
+      (file.size / 1024).toFixed(0) + ' KB · ' + file.type.replace('image/', '').toUpperCase();
+    document.getElementById('previewArea').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+/* drag-drop visual */
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag');
+  const input = document.getElementById('imageInput');
+  input.files = e.dataTransfer.files;
+  handleImage(input);
+});
+
+/* ══════════════════════════════
+   ADD GAME
+══════════════════════════════ */
+function addGame() {
+  const name    = document.getElementById('gameName').value.trim();
+  const console_ = document.getElementById('gameConsole').value;
+
+  if (!name) { showNotif('❌ أدخل اسم اللعبة!', true); return; }
+
+  const file = imageFileName || slugify(name) + '.jpg';
+
+  const game = {
+    id:      Date.now(),
+    name,
+    console: console_,
+    file,
+    preview: imageDataUrl || '',
+  };
+
+  games.push(game);
+  save();
+  renderList();
+  updateExport();
+
+  // reset
+  document.getElementById('gameName').value = '';
+  document.getElementById('imageInput').value = '';
+  document.getElementById('previewArea').classList.remove('show');
+  imageDataUrl = '';
+  imageFileName = '';
+
+  showNotif(`✓ تمت إضافة "${name}" إلى ${console_.toUpperCase()}`);
+}
+
+/* ══════════════════════════════
+   DELETE
+══════════════════════════════ */
+function deleteGame(id) {
+  games = games.filter(g => g.id !== id);
+  save();
+  renderList();
+  updateExport();
+  showNotif('🗑 تم حذف اللعبة');
+}
+
+/* ══════════════════════════════
+   RENDER LIST
+══════════════════════════════ */
+function filterList(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.mini-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderList();
+}
+
+function renderList() {
+  const list = document.getElementById('gamesList');
+  const filtered = currentFilter === 'all' ? games : games.filter(g => g.console === currentFilter);
+
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-msg">🎮<br>لا توجد ألعاب بعد.<br>أضف أول لعبة من اليسار!</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  [...filtered].reverse().forEach(game => {
+    const row = document.createElement('div');
+    row.className = 'game-row';
+
+    const img = document.createElement('img');
+    if (game.preview) {
+      img.src = game.preview;
+    } else {
+      img.style.cssText = 'background:#0d0d0d;display:flex;align-items:center;justify-content:center;font-size:1.5rem;';
+      img.alt = '🎮';
+    }
+    img.onerror = () => { img.src = ''; img.alt = '🎮'; };
+
+    row.innerHTML = `
+      <div class="game-row-info">
+        <div class="game-row-name">${game.name}</div>
+        <div class="game-row-console">${game.console.toUpperCase()}</div>
+        <div class="game-row-file">📁 ${game.console}/${game.file}</div>
+      </div>
+      <button class="del-btn" onclick="deleteGame(${game.id})">✕</button>
+    `;
+    row.insertBefore(img, row.firstChild);
+    list.appendChild(row);
+  });
+}
+
+/* ══════════════════════════════
+   EXPORT CODE
+══════════════════════════════ */
+function updateExport() {
+  const grouped = { ps4: [], ps3: [], ps2: [] };
+  games.forEach(g => {
+    grouped[g.console].push(`    { name: "${g.name}", file: "${g.file}" }`);
+  });
+
+  const lines = [
+    'const GAMES = {',
+    '  ps4: [',
+    (grouped.ps4.length ? grouped.ps4.join(',\n') : '    // لا توجد ألعاب PS4 بعد'),
+    '  ],',
+    '  ps3: [',
+    (grouped.ps3.length ? grouped.ps3.join(',\n') : '    // لا توجد ألعاب PS3 بعد'),
+    '  ],',
+    '  ps2: [',
+    (grouped.ps2.length ? grouped.ps2.join(',\n') : '    // لا توجد ألعاب PS2 بعد'),
+    '  ],',
+    '};',
+  ].join('\n');
+
+  document.getElementById('exportBox').textContent = lines;
+}
+
+function copyExport() {
+  const text = document.getElementById('exportBox').textContent;
+  navigator.clipboard.writeText(text).then(() => showNotif('✓ تم نسخ الكود!'));
+}
+
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
+renderList();
+updateExport();
+</script>
+</body>
+</html>

@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>k4niissg – Game Store</title>
   <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Orbitron:wght@700;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init("Kq6wXkMZLri-fFrcS");</script>
   <style>
     :root {
       --bg: #0a0a0a;
@@ -553,8 +555,9 @@
     <div class="request-box">
       <p class="panel-title" style="color:var(--accent2);font-family:'Orbitron',monospace;font-size:.68rem;letter-spacing:.15em;margin-bottom:.6rem;">◈ طلب لعبة</p>
       <p>هل تبحث عن لعبة غير متوفرة عندنا؟ اطلبها وسنحاول توفيرها لك!</p>
+      <input type="text" id="requestName" placeholder="اسمك..." />
       <input type="text" id="requestGameInput" placeholder="اسم اللعبة..." />
-      <button onclick="submitRequest()">إرسال الطلب</button>
+      <button onclick="submitRequest()" id="reqBtn">إرسال الطلب</button>
     </div>
 
     <!-- Comments -->
@@ -565,7 +568,7 @@
       <div class="comments-input-area">
         <input type="text" id="commentUser" placeholder="اسمك..." />
         <textarea id="commentText" placeholder="اكتب تعليقك هنا..."></textarea>
-        <button onclick="addComment()">نشر التعليق</button>
+        <button onclick="addComment()" id="cmtBtn">نشر التعليق</button>
       </div>
     </div>
   </aside>
@@ -650,14 +653,14 @@
 
 const GAMES = {
   ps4: [
-    { name: "God of War",          file: "godofwar.jpg" },
-    { name: "Spider-Man",          file: "spiderman.jpg" },
+    { name: "God of War",          file: "god-of-war.jpg" },
+    { name: "Spider-Man",          file: "spider-man.jpg" },
     { name: "The Last of Us Part II", file: "tlou2.jpg" },
     { name: "Uncharted 4",         file: "uncharted4.jpg" },
     { name: "Bloodborne",          file: "bloodborne.jpg" },
     { name: "Horizon Zero Dawn",   file: "horizon.jpg" },
     { name: "GTA V",               file: "gta5.jpg" },
-    { name: "FC 26",             file: "fc26.jpg" },
+    { name: "FIFA 23",             file: "fifa23.jpg" },
   ],
   ps3: [
     { name: "The Last of Us",      file: "tlou.jpg" },
@@ -667,7 +670,7 @@ const GAMES = {
     { name: "God of War III",      file: "gow3.jpg" },
   ],
   ps2: [
-    { name: "GTA San Andreas",     file: "gtasa.jpg" },
+    { name: "GTA San Andreas",     file: "gta-sa.jpg" },
     { name: "God of War II",       file: "gow2.jpg" },
     { name: "Shadow of the Colossus", file: "sotc.jpg" },
     { name: "Tekken 5",            file: "tekken5.jpg" },
@@ -796,29 +799,67 @@ function switchTab(console, btn) {
   document.getElementById('totalGames').textContent     = '–';
 }
 
+/* ─── EMAILJS CONFIG ─── */
+const EJS_SERVICE  = 'service_k4niissg';
+const EJS_TEMPLATE = 'template_k4niissg';
+
 /* ─── COMMENTS ─── */
 function addComment() {
   const user = document.getElementById('commentUser').value.trim();
   const text = document.getElementById('commentText').value.trim();
   if (!user || !text) { showNotif('أدخل الاسم والتعليق!'); return; }
 
-  const list = document.getElementById('commentsList');
-  const div  = document.createElement('div');
-  div.className = 'comment-item';
-  div.innerHTML = `<span>// ${user}</span>${text}`;
-  list.prepend(div);
+  const btn = document.getElementById('cmtBtn');
+  btn.textContent = '...جاري الإرسال';
+  btn.disabled = true;
 
-  document.getElementById('commentUser').value = '';
-  document.getElementById('commentText').value = '';
-  showNotif('تم نشر تعليقك ✓');
+  emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+    from_name: user,
+    type:      '💬 تعليق جديد',
+    message:   text,
+  }).then(() => {
+    // show on page
+    const list = document.getElementById('commentsList');
+    const div  = document.createElement('div');
+    div.className = 'comment-item';
+    div.innerHTML = `<span>// ${user}</span>${text}`;
+    list.prepend(div);
+
+    document.getElementById('commentUser').value = '';
+    document.getElementById('commentText').value = '';
+    showNotif('✓ تم نشر تعليقك وإرساله!');
+  }).catch(() => {
+    showNotif('❌ فشل الإرسال، حاول مجدداً');
+  }).finally(() => {
+    btn.textContent = 'نشر التعليق';
+    btn.disabled = false;
+  });
 }
 
 /* ─── REQUEST ─── */
 function submitRequest() {
-  const val = document.getElementById('requestGameInput').value.trim();
-  if (!val) { showNotif('اكتب اسم اللعبة أولاً!'); return; }
-  showNotif(`✓ تم إرسال طلب: "${val}"`);
-  document.getElementById('requestGameInput').value = '';
+  const name = document.getElementById('requestName').value.trim();
+  const game = document.getElementById('requestGameInput').value.trim();
+  if (!game) { showNotif('اكتب اسم اللعبة أولاً!'); return; }
+
+  const btn = document.getElementById('reqBtn');
+  btn.textContent = '...جاري الإرسال';
+  btn.disabled = true;
+
+  emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+    from_name: name || 'زائر',
+    type:      '🎮 طلب لعبة',
+    message:   game,
+  }).then(() => {
+    showNotif(`✓ تم إرسال طلب: "${game}"`);
+    document.getElementById('requestName').value      = '';
+    document.getElementById('requestGameInput').value = '';
+  }).catch(() => {
+    showNotif('❌ فشل الإرسال، حاول مجدداً');
+  }).finally(() => {
+    btn.textContent = 'إرسال الطلب';
+    btn.disabled = false;
+  });
 }
 
 /* ─── SCROLL REVEAL ─── */

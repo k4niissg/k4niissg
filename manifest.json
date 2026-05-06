@@ -1,91 +1,16 @@
 {
   "name": "k4niissg Game Store",
   "short_name": "k4niissg",
-  "description": "متجر ألعاب PlayStation — PS2 · PS3 · PS4",
-  "start_url": "/index.html",
+  "description": "متجر ألعاب PlayStation",
+  "start_url": "/k4niissg/",
+  "scope": "/k4niissg/",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#e8ff00",
   "orientation": "portrait-primary",
   "lang": "ar",
-  "dir": "rtl",
   "icons": [
-    {
-      "src": "icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/screenshot.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
-  "categories": ["games", "shopping", "entertainment"],
-  "shortcuts": [
-    {
-      "name": "ألعاب PS4",
-      "short_name": "PS4",
-      "url": "/index.html#ps4",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "ألعاب PS3",
-      "short_name": "PS3",
-      "url": "/index.html#ps3",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "ألعاب PS2",
-      "short_name": "PS2",
-      "url": "/index.html#ps2",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
-    }
+    { "src": "/k4niissg/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/k4niissg/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
   ]
 }

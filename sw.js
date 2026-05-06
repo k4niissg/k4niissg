@@ -1,69 +1,45 @@
-/* ═══════════════════════════════════════
-   k4niissg Game Store — Service Worker
-   https://k4niissg.vercel.app
-   ═══════════════════════════════════════ */
-
-const CACHE_NAME   = 'k4niissg-v2';
-const OFFLINE_PAGE = '/index.html';
+/* k4niissg — Service Worker for GitHub Pages */
+const CACHE = 'k4niissg-v3';
+const BASE  = '/k4niissg';
 
 const PRECACHE = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
+  BASE + '/',
+  BASE + '/index.html',
+  BASE + '/manifest.json',
 ];
 
-/* ─── INSTALL ─── */
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE.map(url => new Request(url, { cache: 'reload' }))))
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE)
+      .then(c => c.addAll(PRECACHE))
       .then(() => self.skipWaiting())
-      .catch(err => console.log('Cache install error:', err))
   );
 });
 
-/* ─── ACTIVATE ─── */
-self.addEventListener('activate', event => {
-  event.waitUntil(
+self.addEventListener('activate', e => {
+  e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
-/* ─── FETCH: Network First ─── */
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  const url = new URL(e.request.url);
+  if (!url.pathname.startsWith(BASE)) return;
 
-  if (url.origin !== self.location.origin) return;
-  if (request.method !== 'GET') return;
-
-  event.respondWith(
-    fetch(request)
-      .then(response => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+  e.respondWith(
+    fetch(e.request)
+      .then(res => {
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
         }
-        return response;
+        return res;
       })
-      .catch(() =>
-        caches.match(request).then(cached => {
-          if (cached) return cached;
-          if (request.destination === 'document') return caches.match(OFFLINE_PAGE);
-          if (request.destination === 'image') {
-            return new Response(
-              `<svg xmlns="http://www.w3.org/2000/svg" width="150" height="200">
-                <rect width="150" height="200" fill="#111"/>
-                <text x="75" y="110" text-anchor="middle" font-size="40" fill="#333">🎮</text>
-              </svg>`,
-              { headers: { 'Content-Type': 'image/svg+xml' } }
-            );
-          }
-        })
+      .catch(() => caches.match(e.request)
+        .then(cached => cached || caches.match(BASE + '/index.html'))
       )
   );
 });

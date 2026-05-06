@@ -6,12 +6,12 @@
   <title>k4niissg – Game Store</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="/k4niissg/manifest.json" />
   <meta name="theme-color" content="#e8ff00" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="k4niissg" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/k4niissg/icons/icon-192.png" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="application-name" content="k4niissg" />
   <meta name="description" content="متجر ألعاب PlayStation — PS2 · PS3 · PS4" />
@@ -692,71 +692,14 @@
 
 const GAMES = {
   ps4: [
-    { name: "God of War",          file: "godofwar.jpg" },
-    { name: "Spider-Man",          file: "spiderman.jpg" },
+    { name: "God of War",          file: "god-of-war.jpg" },
+    { name: "Spider-Man",          file: "spider-man.jpg" },
     { name: "The Last of Us Part II", file: "tlou2.jpg" },
     { name: "Uncharted 4",         file: "uncharted4.jpg" },
     { name: "Bloodborne",          file: "bloodborne.jpg" },
     { name: "Horizon Zero Dawn",   file: "horizon.jpg" },
     { name: "GTA V",               file: "gta5.jpg" },
-    { name: "FC 26",             file: "fc26.jpg" },
-    { name: "Call of Duty Black Ops: Cold War", file: "codcoldwar.jpg" },
-    { name: "Call of Duty WWII", file: "codww2.jpg" },
-    { name: "Days Gone", file: "daysgone.jpg" },
-    { name: "AC Mirage", file: "acmirage.jpg" },
-    { name: "God of War Ragnarok", file: "gow5.jpg" },
-    { name: "Gran Turismo 7", file: "granturismo7.jpg" },
-    { name: "Mad Max", file: "madmax.jpg" },
-    { name: "Sleeping Dogs", file: "sleepingdogs.jpg" },
-    { name: "Uncharted Trilogy", file: "uncharted123.jpg" },
-    { name: "The Witcher 3", file: "witcher3.jpg" },
-    { name: "The Last of Us", file: "tlou1.jpg" },
-    { name: "Resident Evil 2", file: "re2remake.jpg" },
-    { name: "Resident Evil 3", file: "re3remake.jpg" },
-    { name: "Resident Evil 4 Classic", file: "re4.jpg" },
-    { name: "Resident Evil 4", file: "re4remake.jpg" },
-    { name: "Resident Evil 5", file: "re5.jpg" },
-    { name: "Resident Evil 6", file: "re6.jpg" },
-    { name: "Resident Evil 7", file: "re7.jpg" },
-    { name: "Resident Evil 8", file: "re8.jpg" },
-    { name: "Resident Evil Revelations", file: "rerev1.jpg" },
-    { name: "Resident Evil Revelations 2", file: "rerev2.jpg" },
-    { name: "Call of Duty Advanced Warfare", file: "codaw.jpg" },
-    { name: "Call of Duty Black Ops 3", file: "codblackops3.jpg" },
-    { name: "Call of Duty Black Ops 6", file: "codblackops6.jpg" },
-    { name: "Call of Duty Ghosts", file: "codghosts.jpg" },
-    { name: "Call of Duty Modern Warfare", file: "codmw.jpg" },
-    { name: "Call of Duty Modern Warfare 2", file: "codmw2.jpg" },
-    { name: "Call of Duty Modern Warfare 3", file: "codmw3.jpg" },
-    { name: "Call of Duty Modern Warfare Remastered", file: "codmwrem.jpg" },
-    { name: "Call of Duty Modern Warfare 2 Remastered", file: "codmw2rem.jpg" },
-    { name: "Call of Duty Vanguard", file: "codvanguard.jpg" },
-    { name: "Elden Ring", file: "eldenring.jpg" },
-    { name: "Ghost of Tsushima", file: "ghostoftsushima.jpg" },
-    { name: "Ghost Recon: Wildlands", file: "grwildlands.jpg" },
-    { name: "Hogwarts Legacy", file: "hogwarts.jpg" },
-    { name: "Sekiro: Shadows Die Twice", file: "sekiro.jpg" },
-    { name: "Dark Souls Trilogy", file: "darksouls.jpg" },
-    { name: "AC III", file: "ac3.jpg" },
-    { name: "AC IV", file: "ac4.jpg" },
-    { name: "AC Chronicles", file: "acchronicles.jpg" },
-    { name: "AC The Ezio Collection", file: "acezio.jpg" },
-    { name: "AC Odyssey", file: "acodyssey.jpg" },
-    { name: "AC Origins", file: "acorigins.jpg" },
-    { name: "AC Rogue", file: "acrogue.jpg" },
-    { name: "AC Syndicate", file: "acsyndicate.jpg" },
-    { name: "AC Unity", file: "acunity.jpg" },
-    { name: "AC Valhalla", file: "acvalhalla.jpg" },
-    { name: "It Takes Two", file: "ittakestwo.jpg" },
-    { name: "A Way Out", file: "awayout.jpg" },
-    { name: "Red Dead Redemption", file: "rdr.jpg" },
-    { name: "Red Dead Redemption 2", file: "rdr2.jpg" },
-    { name: "Spider-Man Miles Morales", file: "spidermanmiles.jpg" },
-    { name: "Uncharted The Lost Legacy", file: "unchartedll.jpg" },
-    { name: "Horizon Forbidden West", file: "horizonfw.jpg" },
-    { name: "Elden Ring Nightreign", file: "eldenringnightreign.jpg" },
-    { name: "PES 2026", file: "pes26.jpg" },
-    { name: "God of War 3", file: "gow3.jpg" }
+    { name: "FIFA 23",             file: "fifa23.jpg" },
   ],
   ps3: [
     { name: "The Last of Us",      file: "tlou.jpg" },
@@ -766,12 +709,13 @@ const GAMES = {
     { name: "God of War III",      file: "gow3.jpg" },
   ],
   ps2: [
-    { name: "GTA San Andreas",     file: "gtasa.jpg" },
+    { name: "GTA San Andreas",     file: "gta-sa.jpg" },
     { name: "God of War II",       file: "gow2.jpg" },
     { name: "Shadow of the Colossus", file: "sotc.jpg" },
     { name: "Tekken 5",            file: "tekken5.jpg" },
   ],
 };
+
 let currentConsole = 'ps4';
 let currentIndex   = 0;
 
@@ -983,9 +927,31 @@ document.addEventListener('keydown', e => {
 /* ─── PWA: تسجيل Service Worker ─── */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
-      .catch(err => console.log('SW error:', err));
+    navigator.serviceWorker.register('/k4niissg/sw.js', { scope: '/k4niissg/' })
+      .then(reg => {
+        console.log('✅ SW registered:', reg.scope);
+        reg.addEventListener('updatefound', () => {
+          const w = reg.installing;
+          w.addEventListener('statechange', () => {
+            if (w.state === 'installed' && navigator.serviceWorker.controller)
+              showNotif('🔄 يوجد تحديث — أعد تحميل الصفحة');
+          });
+        });
+      })
+      .catch(err => console.log('❌ SW error:', err));
+  });
+}
+
+/* حفظ صور الألعاب في الكاش */
+function cacheGameImages() {
+  if (!('caches' in window)) return;
+  caches.open('k4niissg-v3').then(cache => {
+    ['ps4','ps3','ps2'].forEach(con => {
+      (GAMES[con] || []).forEach(g => {
+        const url = `/k4niissg/${con}/${g.file}`;
+        fetch(url).then(r => { if (r.ok) cache.put(url, r); }).catch(()=>{});
+      });
+    });
   });
 }
 

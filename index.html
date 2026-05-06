@@ -954,6 +954,9 @@ document.head.appendChild(style);
 updateStats();
 renderGrid('ps4');
 setTimeout(revealOnScroll, 100);
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
+}
 </script>
 </body>
 </html>
